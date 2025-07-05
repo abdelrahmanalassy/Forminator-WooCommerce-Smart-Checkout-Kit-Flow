@@ -60,7 +60,7 @@ Automatically adds WooCommerce products to the cart upon **Forminator form submi
 ## 🔗 Links
 
 - 🧑‍💻 **Author**: [Abdelrahman Ashraf](https://www.linkedin.com/in/abdelrahman-ashraf-elassy/)
-- 📂 **Website**: [View on GitHub](https://aeprojects.org/)
+- 📂 **Website**: [AE Projects](https://aeprojects.org/)
 
 ---
 
