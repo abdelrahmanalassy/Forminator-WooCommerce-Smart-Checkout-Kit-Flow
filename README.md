@@ -12,7 +12,6 @@ Automatically adds WooCommerce products to the cart upon **Forminator form submi
 - 🧼 Automatically clears the cart before adding products to avoid duplicates.
 - 🚀 Instantly redirects the user to the WooCommerce checkout page.
 - 💾 Saves selected product IDs and Forminator submission ID using cookies and session storage.
-- 🎯 Injects the submission ID into a hidden Forminator field dynamically.
 - 🖼 Displays a user-friendly "Processing..." message to improve UX.
 - 📦 Fully compatible with **Forminator Pro** (WPMU DEV) and **WooCommerce**.
 
@@ -32,7 +31,6 @@ Automatically adds WooCommerce products to the cart upon **Forminator form submi
 2. Activate the plugin from your WordPress dashboard under **Plugins > Installed Plugins**.
 3. Ensure both **Forminator** and **WooCommerce** are active.
 4. Add a **select/dropdown field** in your Forminator form that holds WooCommerce product IDs (e.g., kits).
-5. Add a **hidden field** to store the submission ID (`hidden-4`, or adjust in JS if different).
 6. No additional settings are required — the plugin will automatically detect form success and handle the rest.
 
 ---
@@ -44,7 +42,6 @@ Automatically adds WooCommerce products to the cart upon **Forminator form submi
 - Create your form in **Forminator**.
 - Include the following fields:
   - **Select field** for kit options (with WooCommerce Product IDs as values).
-  - **Hidden field** to inject the submission ID (used for tracking or backend logic).
 
 ### 2. Frontend Flow
 
@@ -74,7 +71,7 @@ The plugin listens for these backend events:
 | File | Description |
 |------|-------------|
 | `forminator-kit-redirect.php` | Main plugin bootstrapper for WordPress |
-| `redirect-final.js` | Handles DOM watching, cart logic, submission ID injection, and redirect |
+| `redirect-final.js` | Handles DOM watching, cart logic, and redirect |
 | `watch-new-order.php` | Backend logic to support cart clearing on query param `empty-cart` |
 
 ---
@@ -86,7 +83,6 @@ The plugin listens for these backend events:
    - “Thank you” message is detected.
    - Cart is cleared.
    - Registration product and selected kit are added.
-   - Hidden field gets populated with submission ID.
    - User is redirected to `/checkout`.
 
 ---
@@ -102,7 +98,7 @@ The plugin listens for these backend events:
 
 - 🔒 If you're storing submission IDs for reporting or validation, ensure they're also stored in your backend.
 - 💡 Works perfectly for registration forms in competitions, workshops, educational kits, and more.
-- ⚠️ Make sure the form ID (`#forminator-module-1433`) and field names (`select-3`, `hidden-4`) match your actual form configuration.
+- ⚠️ Make sure the form ID (`#forminator-module-1433`) and field name (`select-3`) match your actual form configuration.
 
 ---
 
