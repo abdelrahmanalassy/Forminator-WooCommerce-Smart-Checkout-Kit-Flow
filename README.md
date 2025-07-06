@@ -1,24 +1,26 @@
 # 🧾 Instant Checkout via Forminator
 
-Automatically adds WooCommerce products to the cart upon **Forminator form submission** and redirects the user to the **checkout page**. Perfect for registration flows, event signups, or product onboarding sequences.
+Automatically adds WooCommerce products to the cart upon **Forminator form submission** and redirects the user to the **checkout page**. Ideal for registration flows, competitions, or onboarding products.
 
 ---
 
 ## ✅ Features
 
-- 🔄 Auto-add predefined products to the WooCommerce cart on successful form submission.
-- 🛒 Supports multiple product selections (e.g., registration fee + optional kits).
-- 🧠 Detects form submission success via DOM mutation.
-- 🧼 Automatically clears the cart before adding new products (to avoid duplication).
-- 🚀 Instant redirection to the WooCommerce checkout.
-- 🎨 Displays a "Processing..." message to enhance UX.
-- 📦 Works with Forminator Pro (by WPMU DEV).
+- 🔄 Auto-add predefined and user-selected products to the WooCommerce cart after successful Forminator form submission.
+- 🛒 Supports multiple product additions (e.g., fixed registration product + optional kit).
+- 🧠 Detects successful form submission via DOM mutation (no need to hook into PHP submission events).
+- 🧼 Automatically clears the cart before adding products to avoid duplicates.
+- 🚀 Instantly redirects the user to the WooCommerce checkout page.
+- 💾 Saves selected product IDs and Forminator submission ID using cookies and session storage.
+- 🎯 Injects the submission ID into a hidden Forminator field dynamically.
+- 🖼 Displays a user-friendly "Processing..." message to improve UX.
+- 📦 Fully compatible with **Forminator Pro** (WPMU DEV) and **WooCommerce**.
 
 ---
 
 ## 📌 Requirements
 
-- WordPress 6.0+
+- WordPress 6.0 or later
 - [WooCommerce](https://woocommerce.com/)
 - [Forminator Pro](https://wpmudev.com/project/forminator-pro/)
 
@@ -27,48 +29,80 @@ Automatically adds WooCommerce products to the cart upon **Forminator form submi
 ## 🔧 Installation
 
 1. Upload the plugin folder to `/wp-content/plugins/`.
-2. Activate the plugin via **Plugins > Installed Plugins** in your WordPress admin dashboard.
-3. Make sure Forminator and WooCommerce are active.
-4. In your Forminator form, add a dropdown/select field that stores the kit product ID.
-5. The plugin will handle the rest: detect submission, clear cart, add products, and redirect.
+2. Activate the plugin from your WordPress dashboard under **Plugins > Installed Plugins**.
+3. Ensure both **Forminator** and **WooCommerce** are active.
+4. Add a **select/dropdown field** in your Forminator form that holds WooCommerce product IDs (e.g., kits).
+5. Add a **hidden field** to store the submission ID (`hidden-4`, or adjust in JS if different).
+6. No additional settings are required — the plugin will automatically detect form success and handle the rest.
 
 ---
 
-## 📘 Usage
+## 📘 Usage Guide
 
-- Create a **Forminator form** with required user info.
-- Add a **select field** with WooCommerce product IDs as option values.
-- Upon submission, the plugin will:
-  - Detect the success message,
-  - Grab the selected product ID,
-  - Clear the WooCommerce cart,
-  - Add products to cart (fixed + dynamic),
-  - Redirect the user to `/checkout`.
+### 1. Form Setup
+
+- Create your form in **Forminator**.
+- Include the following fields:
+  - **Select field** for kit options (with WooCommerce Product IDs as values).
+  - **Hidden field** to inject the submission ID (used for tracking or backend logic).
+
+### 2. Frontend Flow
+
+Upon form submission:
+- The plugin detects the success message.
+- Injects the Forminator submission ID into a hidden field.
+- Clears the WooCommerce cart.
+- Adds:
+  - A **fixed registration product** (hardcoded as product ID `1384` in `redirect-final.js`)
+  - A **dynamic product** based on the selected kit.
+- Displays a “We are processing your registration…” message.
+- Redirects the user to `/checkout`.
+
+---
+
+## 🔐 Backend Endpoints
+
+The plugin listens for these backend events:
+
+- `?empty-cart=yes`: Used to empty the WooCommerce cart (via PHP in `watch-new-order.php`).
+- `?wc-ajax=add_to_cart`: Standard WooCommerce endpoint used by JS to add products via AJAX.
+
+---
+
+## 🧩 File Overview
+
+| File | Description |
+|------|-------------|
+| `forminator-kit-redirect.php` | Main plugin bootstrapper for WordPress |
+| `redirect-final.js` | Handles DOM watching, cart logic, submission ID injection, and redirect |
+| `watch-new-order.php` | Backend logic to support cart clearing on query param `empty-cart` |
 
 ---
 
 ## 📸 Example Flow
 
-1. User fills out a Forminator form and selects a kit.
-2. On successful submission:
-    - “Thank you” message replaced by “Processing your registration...”
-    - Products are auto-added.
-    - User is redirected to WooCommerce checkout.
+1. User selects a kit from a dropdown in the form.
+2. On success:
+   - “Thank you” message is detected.
+   - Cart is cleared.
+   - Registration product and selected kit are added.
+   - Hidden field gets populated with submission ID.
+   - User is redirected to `/checkout`.
 
 ---
 
-## 🔗 Links
+## 🔗 Author Info
 
-- 🧑‍💻 **Author**: [Abdelrahman Ashraf](https://www.linkedin.com/in/abdelrahman-ashraf-elassy/)
-- 📂 **Website**: [AE Projects](https://aeprojects.org/)
+- 🧑‍💻 **Developer**: [Abdelrahman Ashraf](https://www.linkedin.com/in/abdelrahman-ashraf-elassy/)
+- 🌐 **Website**: [AE Projects](https://aeprojects.org/)
 
 ---
 
-## 🧠 Notes
+## 🧠 Notes & Tips
 
-> This plugin is ideal for non-technical site owners who need an automated and seamless checkout after a form submission.
-
-> **Pro tip**: If you're running a competition, registration event, or educational challenge — this plugin saves time and reduces user error.
+- 🔒 If you're storing submission IDs for reporting or validation, ensure they're also stored in your backend.
+- 💡 Works perfectly for registration forms in competitions, workshops, educational kits, and more.
+- ⚠️ Make sure the form ID (`#forminator-module-1433`) and field names (`select-3`, `hidden-4`) match your actual form configuration.
 
 ---
 
