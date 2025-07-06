@@ -14,7 +14,7 @@ function send_order_data_to_google_sheet($order_id) {
     $orderNumber = $order->get_order_number();
 
     // Webhook URL to Google Sheets script
-    $sheet_url = 'https://script.google.com/macros/s/AKfycby2h2hvinRGKdHOZEP61kbKy7qoXGyK_Zvj7XoA02i95ji7Irlc8hg6ueO6h3rjtXgX/exec';
+    $sheet_url = 'Your Web URL';
 
     // Prepare payload
     $payload = array(
@@ -39,7 +39,7 @@ function update_sheet_on_status_change($order_id, $old_status, $new_status, $ord
     $amount      = $order->get_total();
     $orderNumber = $order->get_order_number();
 
-    $sheet_url = 'https://script.google.com/macros/s/AKfycby2h2hvinRGKdHOZEP61kbKy7qoXGyK_Zvj7XoA02i95ji7Irlc8hg6ueO6h3rjtXgX/exec';
+    $sheet_url = 'Your Web URL';
 
     $payload = array(
         'email'    => $email,
