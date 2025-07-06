@@ -66,6 +66,69 @@ The plugin listens for these backend events:
 
 ---
 
+## 📤 Google Sheets Integration
+
+If you want to **track orders in Google Sheets** based on the form submission email, use the following **Apps Script** to handle incoming order data from your website.
+
+### ✅ What It Does
+
+- Accepts a POST request containing `email`, `amount`, `order_id`, and `status`.
+- Searches for a matching email in your Google Sheet (column 19).
+- If a match is found:
+  - Fills the order ID in **Column D**
+  - Fills the amount in **Column E**
+  - Fills the status in **Column F**
+
+### 💡 Use Case
+
+This is useful for:
+- Updating participant information after checkout
+- Tracking payments for competitions or events
+- Cross-referencing WooCommerce data with form submissions
+
+### 🔧 Setup Steps
+
+1. Go to [Google Apps Script](https://script.google.com/).
+2. Create a new project linked to your target Google Sheet.
+3. Replace the default code with the script below.
+4. Deploy it as a **Web App**:
+   - Select `Execute as: Me`
+   - Access: `Anyone (even anonymous)`
+5. Copy the Web App URL — this will be your webhook endpoint.
+
+### 🧠 Script
+
+```javascript
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+
+  var email   = data.email;
+  var amount  = data.amount;
+  var status  = data.status;
+  var orderId = data.order_id;
+
+  var range = sheet.getDataRange();
+  var values = range.getValues();
+
+  for (var i = 1; i < values.length; i++) {
+    // Log the email being checked
+    Logger.log("🔍 Checking row " + i + " with email: " + values[i][18]);
+
+    // Email comparison with safety
+    if (values[i][18].toLowerCase().trim() == email.toLowerCase().trim()) {
+      sheet.getRange(i + 1, 4).setValue(orderId);  // Column D
+      sheet.getRange(i + 1, 5).setValue(amount);   // Column E
+      sheet.getRange(i + 1, 6).setValue(status);   // Column F
+      Logger.log("✅ Data matched and written at row " + (i+1));
+      break;
+    }
+  }
+
+  return ContentService.createTextOutput("Data updated for email: " + email);
+}
+```
+
 ## 🧩 File Overview
 
 | File | Description |
