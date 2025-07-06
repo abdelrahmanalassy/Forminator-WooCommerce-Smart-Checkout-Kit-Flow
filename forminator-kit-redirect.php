@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Instant Checkout via Forminator
  * Description: Automatically adds products to the WooCommerce cart on Forminator form submission and redirects users to checkout. Ideal for registration flows.
- * Version: 1.3
+ * Version: 1.4
  * Author: Abdelrahman Ashraf
  * Author URI: https://www.linkedin.com/in/abdelrahman-ashraf-elassy/
  * Requires Plugins: Forminator, Woocommerce
@@ -11,8 +11,8 @@
  * Requires PHP: 7.4
  */
 
+// Add GitHub link in plugin list
 add_filter('plugin_row_meta', 'forminator_checkout_plugin_meta_links', 10, 2);
-
 function forminator_checkout_plugin_meta_links($links, $file) {
     if (strpos($file, 'forminator-kit-redirect.php') !== false) {
         $new_links = array(
@@ -23,7 +23,10 @@ function forminator_checkout_plugin_meta_links($links, $file) {
     return $links;
 }
 
-// Enqueue JS on front-end only if Forminator form is found
+// Include file that watches new WooCommerce orders
+require_once plugin_dir_path(__FILE__) . 'watch-new-order.php';
+
+// Load redirect-final.js on frontend
 function seaperch_enqueue_redirect_script() {
     wp_enqueue_script(
         'redirect-final',
@@ -34,3 +37,4 @@ function seaperch_enqueue_redirect_script() {
     );
 }
 add_action('wp_enqueue_scripts', 'seaperch_enqueue_redirect_script');
+

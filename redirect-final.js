@@ -26,6 +26,24 @@ jQuery(document).ready(function ($) {
                         console.error("❌ Invalid product ID:", kitValue);
                         return;
                     }
+                    
+                    /// 🔻 [START] Inject Submission ID from sessionStorage/cookie into hidden field
+                    const savedSubmissionId = sessionStorage.getItem('forminator_submission_id') || getCookie('forminator_submission_id');
+                    const hiddenField = document.querySelector('input[name="hidden-4"]');
+
+                    if (hiddenField && savedSubmissionId) {
+                        hiddenField.value = savedSubmissionId;
+                        console.log("🆔 Injected Submission ID into hidden field:", savedSubmissionId);
+                    } else {
+                        console.warn("⚠️ Could not inject Submission ID into hidden field.");
+                    }
+
+                    // Save again to be safe
+                    if (savedSubmissionId) {
+                        document.cookie = `forminator_submission_id=${savedSubmissionId}; path=/`;
+                        sessionStorage.setItem('forminator_submission_id', savedSubmissionId);
+                    }
+                    // 🔺 [END] Inject Submission ID into hidden field
 
                     // Show loading message
                     const loadingDiv = document.createElement('div');
@@ -73,3 +91,9 @@ jQuery(document).ready(function ($) {
         }
     }, 300);
 });
+
+// ✅ Helper function to read cookies by name
+function getCookie(name) {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? match[2] : null;
+}
