@@ -127,6 +127,54 @@ function doPost(e) {
 
   return ContentService.createTextOutput("Data updated for email: " + email);
 }
+
+```
+## 🧠 Auto-Translate Kit IDs in Google Sheets
+
+If you're collecting **WooCommerce product IDs** (e.g., selected kits) via Forminator and storing them in Google Sheets, this Apps Script automatically **replaces those numeric IDs with human-readable product names** — directly inside the sheet.
+
+### ✅ What It Does
+
+- Monitors **Column M** for incoming product codes.
+- Replaces numeric product IDs like `1385` with corresponding names like `"Drive Pack"`.
+- Runs automatically on any sheet change — including entries pushed by Forminator.
+- Modifies the cell in-place (no need for extra columns or formulas).
+
+### 🧩 Use Case
+
+Great for:
+- Making submission data readable and export-friendly.
+- Replacing internal product codes with names for your team or reports.
+- Eliminating the need for VLOOKUP or helper columns.
+
+---
+
+### 🔧 Setup Instructions
+
+1. Open your target Google Sheet.
+2. Go to **Extensions > Apps Script**.
+3. Paste the following script:
+
+```javascript
+function onChange(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const range = sheet.getRange("M2:M"); // Assuming data starts from row 2 in column M
+  const values = range.getValues();
+
+  const codeMap = {
+    1385: "Product-1",
+    1386: "Product-2",
+    1387: "Product-3",
+    1389: "Product-4"
+  };
+
+  for (let i = 0; i < values.length; i++) {
+    const code = values[i][0];
+    if (codeMap.hasOwnProperty(code)) {
+      range.getCell(i + 1, 1).setValue(codeMap[code]);
+    }
+  }
+}
 ```
 
 ## 🧩 File Overview
