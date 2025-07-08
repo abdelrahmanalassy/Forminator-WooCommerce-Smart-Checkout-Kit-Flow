@@ -66,35 +66,43 @@ The plugin listens for these backend events:
 
 ---
 
-## 📤 Google Sheets Integration
+## 📤 Google Sheets Integration (Updated)
 
-If you want to **track orders in Google Sheets** based on the form submission email, use the following **Apps Script** to handle incoming order data from your website.
+If you want to **track WooCommerce orders** based on Forminator form submissions, use the following **Google Apps Script** to automatically update Google Sheets rows based on user email.
 
-### ✅ What It Does
+### ✅ What It Does (Updated Logic)
 
-- Accepts a POST request containing `email`, `amount`, `order_id`, and `status`.
-- Searches for a matching email in your Google Sheet (column 19).
-- If a match is found:
-  - Fills the order ID in **Column D**
-  - Fills the amount in **Column E**
-  - Fills the status in **Column F**
+- Accepts a POST request with `email`, `amount`, `order_id`, and `status`.
+- **Searches from bottom to top** in your Google Sheet (Column **S**, index 19) to find the **most recent matching email**.
+- Once matched, it updates:
+  - 🆔 **Order ID** in **Column D**
+  - 💵 **Amount** in **Column E**
+  - 📦 **Status** in **Column F**
+
+This avoids overwriting old data when a user submits multiple entries with the same email (e.g., during retry or multi-step registration).
+
+---
 
 ### 💡 Use Case
 
-This is useful for:
-- Updating participant information after checkout
-- Tracking payments for competitions or events
-- Cross-referencing WooCommerce data with form submissions
+Perfect for:
+- Updating participant status after WooCommerce checkout
+- Keeping Google Sheets in sync with the most **recent** order per user
+- Avoiding accidental updates to earlier records
 
-### 🔧 Setup Steps
+---
 
-1. Go to [Google Apps Script](https://script.google.com/).
-2. Create a new project linked to your target Google Sheet.
-3. Replace the default code with the script below.
-4. Deploy it as a **Web App**:
-   - Select `Execute as: Me`
-   - Access: `Anyone (even anonymous)`
-5. Copy the Web App URL — this will be your webhook endpoint.
+### 🔧 Setup Instructions
+
+1. Open [Google Apps Script](https://script.google.com/) and create a new project.
+2. Link it to your target Google Sheet.
+3. Paste the updated script below.
+4. Deploy as a **Web App**:
+   - **Execute as**: Me  
+   - **Access**: Anyone (even anonymous)
+5. Copy the Web App URL — use it as a webhook endpoint in your WooCommerce hook/PHP file.
+
+---
 
 ### 🧠 Script
 
@@ -103,29 +111,42 @@ function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   var data = JSON.parse(e.postData.contents);
 
-  var email   = data.email;
+  var email   = String(data.email || "").toLowerCase().trim();
   var amount  = data.amount;
   var status  = data.status;
   var orderId = data.order_id;
 
-  var range = sheet.getDataRange();
-  var values = range.getValues();
+  var lastRow = sheet.getLastRow();
+  Logger.log("📌 lastRow: " + lastRow);
 
-  for (var i = 1; i < values.length; i++) {
-    // Log the email being checked
-    Logger.log("🔍 Checking row " + i + " with email: " + values[i][18]);
+  var emailColumn = sheet.getRange(1, 19, lastRow).getValues(); // Column S
+  var targetRow = -1;
 
-    // Email comparison with safety
-    if (values[i][18].toLowerCase().trim() == email.toLowerCase().trim()) {
-      sheet.getRange(i + 1, 4).setValue(orderId);  // Column D
-      sheet.getRange(i + 1, 5).setValue(amount);   // Column E
-      sheet.getRange(i + 1, 6).setValue(status);   // Column F
-      Logger.log("✅ Data matched and written at row " + (i+1));
-      break;
+  for (var i = lastRow - 1; i >= 1; i--) {
+    var sheetEmailRaw = emailColumn[i][0];
+
+    if (sheetEmailRaw) {
+      var sheetEmail = String(sheetEmailRaw).toLowerCase().trim();
+      Logger.log("🔍 Comparing row " + (i + 1) + ": " + sheetEmail + " === " + email);
+
+      if (sheetEmail === email) {
+        targetRow = i + 1;
+        Logger.log("✅ Match found at row " + targetRow);
+        break;
+      }
     }
   }
 
-  return ContentService.createTextOutput("Data updated for email: " + email);
+  if (targetRow !== -1) {
+    sheet.getRange(targetRow, 4).setValue(orderId);  // D
+    sheet.getRange(targetRow, 5).setValue(amount);   // E
+    sheet.getRange(targetRow, 6).setValue(status);   // F
+    Logger.log("✏️ Updated row: " + targetRow);
+  } else {
+    Logger.log("❌ No match for email: " + email);
+  }
+
+  return ContentService.createTextOutput("Processed for email: " + email);
 }
 
 ```
