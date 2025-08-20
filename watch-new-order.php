@@ -19,7 +19,7 @@ function send_order_data_to_google_sheet($order_id) {
     $order_status = $order->get_status();
 
     // URL of your Google Apps Script (acts as webhook)
-    $webhook_url = 'https://script.google.com/macros/s/AKfycbwrhwYdsXsu70kH_4MNNbFm6W5CVC5SzjcF63ZAS308BEuvZ1JbFRz2i4LAuQe7Wf8Khw/exec';
+    $webhook_url = 'your-script-url';
 
     // Format the data to send
     $data = [
@@ -59,7 +59,7 @@ function update_sheet_on_status_change($order_id, $old_status, $new_status, $ord
     $orderNumber = $order->get_order_number();
 
     // Same Apps Script URL
-    $sheet_url = 'https://script.google.com/macros/s/AKfycbwrhwYdsXsu70kH_4MNNbFm6W5CVC5SzjcF63ZAS308BEuvZ1JbFRz2i4LAuQe7Wf8Khw/exec';
+    $sheet_url = 'your-script-url';
 
     // Payload with new status
     $payload = array(
@@ -76,3 +76,4 @@ function update_sheet_on_status_change($order_id, $old_status, $new_status, $ord
         'body'    => json_encode($payload),
     ));
 }
+
