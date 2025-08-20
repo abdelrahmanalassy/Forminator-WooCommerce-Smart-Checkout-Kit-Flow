@@ -205,11 +205,12 @@ function onChange(e) {
 
 ## 🧩 File Overview
 
-| File | Description |
-|------|-------------|
-| `forminator-kit-redirect.php` | Main plugin bootstrapper for WordPress |
-| `redirect-final.js` | Handles DOM watching, cart logic, and redirect |
-| `watch-new-order.php` | Backend logic to support cart clearing on query param `empty-cart` |
+| File                         | Description                                                                 |
+|------------------------------|-----------------------------------------------------------------------------|
+| `forminator-kit-redirect.php` | Main plugin bootstrapper for WordPress. Loads scripts and initializes plugin logic. |
+| `redirect-final.js`          | Handles frontend logic: form submission detection, cart clearing, product adding, and redirecting to checkout. |
+| `watch-new-order.php`        | Backend PHP logic to clear the WooCommerce cart when `?empty-cart=yes` is detected. |
+| `forminator-role-control.php`| Optional file for implementing role-based access control or submission filtering (e.g., limit form access by user roles). |
 
 ---
 
