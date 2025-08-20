@@ -3,7 +3,7 @@ jQuery(document).ready(function ($) {
 
     // Wait for the Forminator form container to appear
     const waitForForm = setInterval(() => {
-        const formContainer = document.querySelector('#forminator-module-1482');
+        const formContainer = document.querySelector('#forminator-short-code');
         if (formContainer) {
             clearInterval(waitForForm);
             console.log("Form container found");
@@ -96,3 +96,4 @@ function getCookie(name) {
     const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
     return match ? match[2] : null;
 }
+
