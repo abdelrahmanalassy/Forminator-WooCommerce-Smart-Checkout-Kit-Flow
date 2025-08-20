@@ -82,7 +82,7 @@ add_action('template_redirect', function () {
 
     // Only redirect after successful payment
     if ($order->has_status(array('processing', 'completed'))) {
-        $target = 'https://seaperchnorthafrica.org/thank-you/';
+        $target = 'https://your-website/thank-you/';
 
         // Avoid infinite redirect loops
         $current_url_path = isset($_SERVER['REQUEST_URI']) ? trailingslashit(home_url($_SERVER['REQUEST_URI'])) : '';
@@ -98,8 +98,9 @@ add_action('template_redirect', function () {
 // -----------------------------------------------------------------------------
 add_filter('woocommerce_get_return_url', function ($return_url, $order) {
     if ($order instanceof WC_Order && $order->has_status(array('processing','completed'))) {
-        return 'https://seaperchnorthafrica.org/thank-you/';
+        return 'https://your-website/thank-you/';
     }
     return $return_url;
 }, 10, 2);
+
 
